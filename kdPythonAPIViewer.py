@@ -2,6 +2,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSlot, Qt, QFile, QTextCodec
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 import os
 import sys
 import webbrowser
@@ -17,9 +18,13 @@ class kdPythonAPIViewer(QWidget):
         loadUi("kdPythonAPIViewer.ui", self)
         #~ print(dir(self.cb_text))
 
-        self.helper = Helper(self.tb_result,self.tb_result)
+        self.webview = QWebEngineView()
+        self.helper = Helper()
 
 
+    def load(self, url):
+        self.webview.load(QUrl(url))
+        self.webview.show()
 
     @pyqtSlot()
     def on_pb_query_clicked(self):
@@ -54,12 +59,20 @@ class kdPythonAPIViewer(QWidget):
                 self.cb_sub_text.addItem(str(m).strip())
 
         if show_api_info:
-            self.helper.help(str(module_))
+            self.get_api_doc(module_)
     def on_cb_sub_text_currentIndexChanged(self):
         cur_item = self.cb_sub_text.currentText()
         module_ =  self.main_module +"." + cur_item
-        self.helper.help(str(module_))
+        self.get_api_doc(str(module_))
 
+    def get_api_doc(self,module_):
+        doc = self.helper.help(str(module_))
+        self.tb_result.setHtml(doc)
+        #~ self.tb_result.find("Methods inherited from")
+        #~ 定为到指定行
+        self.tb_result.find("Methods inherited from")
+        #~ QTextBrowser
+        #~ self.webview.setHtml("<html>a</html>")
 if __name__ == "__main__":
     import sys
 

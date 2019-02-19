@@ -1641,11 +1641,13 @@ def doc(thing, title='Python Library Documentation: %s', forceload=0,
         output=None):
     """Display text documentation, given an object or a path to an object."""
     try:
-        if output is None:
-            pager(render_doc(thing, title, forceload))
-        else:
+        #~ if output is None:
+            #~ pager(render_doc(thing, title, forceload))
+        #~ else:
             #~ output.write(render_doc(thing, title, forceload, plaintext))
-            output.setText(render_doc(thing, title, forceload, plaintext))
+            #~ output.setText(render_doc(thing, title, forceload, plaintext))
+            #~ output.setText(render_doc(thing, title, forceload, html))
+        return render_doc(thing, title, forceload, html)
     except (ImportError, ErrorDuringImport) as value:
         print(value)
 
@@ -1894,22 +1896,22 @@ has the same effect as typing a particular string at the help> prompt.
     def help(self, request):
         if type(request) is type(''):
             request = request.strip()
-            if request == 'keywords': self.listkeywords()
-            elif request == 'symbols': self.listsymbols()
-            elif request == 'topics': self.listtopics()
-            elif request == 'modules': self.listmodules()
+            if request == 'keywords': return self.listkeywords()
+            elif request == 'symbols': return self.listsymbols()
+            elif request == 'topics': return  self.listtopics()
+            elif request == 'modules': return  self.listmodules()
             elif request[:8] == 'modules ':
-                self.listmodules(request.split()[1])
-            elif request in self.symbols: self.showsymbol(request)
+                return  self.listmodules(request.split()[1])
+            elif request in self.symbols: return  self.showsymbol(request)
             elif request in ['True', 'False', 'None']:
                 # special case these keywords since they are objects too
-                doc(eval(request), 'Help on %s:')
-            elif request in self.keywords: self.showtopic(request)
-            elif request in self.topics: self.showtopic(request)
-            elif request: doc(request, 'Help on %s:', output=self._output)
-            else: doc(str, 'Help on %s:', output=self._output)
-        elif isinstance(request, Helper): self()
-        else: doc(request, 'Help on %s:', output=self._output)
+                return doc(eval(request), 'Help on %s:')
+            elif request in self.keywords: return  self.showtopic(request)
+            elif request in self.topics: return  self.showtopic(request)
+            elif request: return  doc(request, 'Help on %s:', output=self._output)
+            else: return doc(str, 'Help on %s:', output=self._output)
+        elif isinstance(request, Helper): return  self()
+        else: return doc(request, 'Help on %s:', output=self._output)
         #~ self.output.setText('\n')
 
     def intro(self):
