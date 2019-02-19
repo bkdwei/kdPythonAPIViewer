@@ -8,6 +8,7 @@ import webbrowser
 #~ from PyQt5.QtGui import *
 from PyQt5.uic import loadUi
 from fileutil import check_and_create, check_and_create_dir
+from pydocc import Helper
 
 
 class kdPythonAPIViewer(QWidget):
@@ -16,18 +17,22 @@ class kdPythonAPIViewer(QWidget):
         loadUi("kdPythonAPIViewer.ui", self)
         print(dir(self.cb_text))
 
+        self.helper = Helper(self.tb_result,self.tb_result)
+
 
 
     @pyqtSlot()
     def on_pb_query_clicked(self):
-        query_text = self.cb_text.currentText()
+        query_text = str(self.cb_text.currentText())
         print(query_text)
         #~ 导入单个模块
         single_import_flag = query_text.find("from") >=0 and query_text.find(",") <0 and query_text.find("*") <0
         if single_import_flag :
-            module_ = query_text.index("from","").replace("import",".").replace(" ","")
+            module_ = query_text.replace("from","").replace("import",".").replace(" ","")
             print(module_)
-            help(module_)
+            #~ help(module_)
+
+            self.helper.help(str(module_))
 
         #~ 导入多个模块
         self.multi_import_flag = query_text.find("from") >=0 and query_text.find(",") >0 and query_text.find("*") <0
