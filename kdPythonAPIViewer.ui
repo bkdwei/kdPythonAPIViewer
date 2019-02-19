@@ -14,19 +14,6 @@
    <string>pythonAPI查看器</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="lb_text">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>模块</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
     <widget class="QComboBox" name="cb_text">
      <property name="editable">
@@ -37,9 +24,19 @@
        <string>from PyQt5.QtWidgets import QWidget</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>from PyQt5.QtWidgets import QMainWindow, QTextBrowser, QWidget</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>import string</string>
+      </property>
+     </item>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item row="0" column="3">
     <widget class="QComboBox" name="cb_sub_text">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -55,7 +52,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3">
+   <item row="0" column="4">
     <widget class="QPushButton" name="pb_query">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -68,8 +65,34 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="4">
+   <item row="0" column="0">
+    <widget class="QLabel" name="lb_text">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>模块</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="5">
     <widget class="QTextBrowser" name="tb_result"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="lb_sub_text">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>子模块</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
