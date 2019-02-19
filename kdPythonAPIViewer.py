@@ -15,7 +15,7 @@ class kdPythonAPIViewer(QWidget):
     def __init__(self):
         super(kdPythonAPIViewer, self).__init__()
         loadUi("kdPythonAPIViewer.ui", self)
-        print(dir(self.cb_text))
+        #~ print(dir(self.cb_text))
 
         self.helper = Helper(self.tb_result,self.tb_result)
 
@@ -23,26 +23,42 @@ class kdPythonAPIViewer(QWidget):
 
     @pyqtSlot()
     def on_pb_query_clicked(self):
-        query_text = str(self.cb_text.currentText())
+        query_text = self.cb_text.currentText().strip()
+        module_ = None
         print(query_text)
-        #~ 导入单个模块
+        show_api_info = True
+
+
+        #~ 只有import的情形，形如import string
+        only_import_flag = query_text.find("import") == 0
+        if only_import_flag :
+            module_ = query_text.replace("import","").strip()
+
+        #~ 导入单个模块，形如from PyQt5.QtWidgets import QMainWindow
         single_import_flag = query_text.find("from") >=0 and query_text.find(",") <0 and query_text.find("*") <0
         if single_import_flag :
             module_ = query_text.replace("from","").replace("import",".").replace(" ","")
-            print(module_)
-            #~ help(module_)
 
-            self.helper.help(str(module_))
 
-        #~ 导入多个模块
+        #~ 导入多个模块，形如from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget
         self.multi_import_flag = query_text.find("from") >=0 and query_text.find(",") >0 and query_text.find("*") <0
         if self.multi_import_flag :
+            show_api_info = False
             module_ = query_text.split("import")
-            print(",".join(module_))
+            self.main_module = module_[0].replace("from","").strip()
             sub_module = str(module_[1]).split(",")
+            #~ print(",".join(sub_module))
             self.cb_sub_text.clear()
-            for m in enumerate(sub_module,1):
+            for m in sub_module:
+                print(m)
                 self.cb_sub_text.addItem(str(m).strip())
+
+        if show_api_info:
+            self.helper.help(str(module_))
+    def on_cb_sub_text_currentIndexChanged(self):
+        cur_item = self.cb_sub_text.currentText()
+        module_ =  self.main_module +"." + cur_item
+        self.helper.help(str(module_))
 
 if __name__ == "__main__":
     import sys
