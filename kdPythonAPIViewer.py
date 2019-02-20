@@ -2,7 +2,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSlot, Qt, QFile, QTextCodec
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 import os
 import sys
 import webbrowser
@@ -19,7 +18,6 @@ class kdPythonAPIViewer(QWidget):
         loadUi("kdPythonAPIViewer.ui", self)
         # ~ print(dir(Qt))
 
-        self.webview = QWebEngineView()
         self.helper = Helper()
 
         self.navigate = navigate()
