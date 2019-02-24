@@ -3,6 +3,12 @@
 
 # 已实现的功能
 输入from PyQt5.QtWidgets import QMainWindow，查询QMainWindow的API
+刷新系统缓存的API+
+树可以滚动
+集成搜索框 +
+多国语言
+显示类的方法
+仅显示类的html +
 
 # 截图
 

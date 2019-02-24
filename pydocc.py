@@ -2031,17 +2031,17 @@ module "pydoc_data.topics" could not be found.
 
     def listmodules(self, key=''):
         if key:
-            self.output.write('''
-Here is a list of modules whose name or summary contains '{}'.
-If there are any, enter a module name to get more help.
+            # ~ self.output.write('''
+# ~ Here is a list of modules whose name or summary contains '{}'.
+# ~ If there are any, enter a module name to get more help.
 
-'''.format(key))
+# ~ '''.format(key))
             apropos(key)
         else:
-            self.output.write('''
-Please wait a moment while I gather a list of all available modules...
+            # ~ self.output.write('''
+# ~ Please wait a moment while I gather a list of all available modules...
 
-''')
+# ~ ''')
             modules = {}
             def callback(path, modname, desc, modules=modules):
                 if modname and modname[-9:] == '.__init__':
@@ -2051,11 +2051,13 @@ Please wait a moment while I gather a list of all available modules...
             def onerror(modname):
                 callback(None, modname, None)
             ModuleScanner().run(callback, onerror=onerror)
-            self.list(modules.keys())
-            self.output.write('''
-Enter any module name to get more help.  Or, type "modules spam" to search
-for modules whose name or summary contain the string "spam".
-''')
+            items = list(sorted(modules.keys()))
+            return items
+            # ~ self.list(modules.keys())
+            # ~ self.output.write('''
+# ~ Enter any module name to get more help.  Or, type "modules spam" to search
+# ~ for modules whose name or summary contain the string "spam".
+# ~ ''')
 
 help = Helper()
 
