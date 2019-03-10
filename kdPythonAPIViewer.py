@@ -1,89 +1,80 @@
 #!/usr/bin/env python3
 #-*- coding:utf-8 -*-
 
-import os
+from os import  path
 import sys
-import webbrowser
 import json
 import inspect
 import pkgutil
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot, Qt, QFile, QTextCodec
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget,QTreeWidgetItem
+from PyQt5.QtCore import pyqtSlot, Qt, QFile
+from PyQt5.Qt import QCursor
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget,QTreeWidgetItem,QApplication
 from PyQt5.QtGui import QTextDocument
 from PyQt5.uic import loadUi
-from fileutil import check_and_create, check_and_create_dir
-from pydocc import Helper,resolve
+from .fileutil import get_file_realpath,config_file,check_and_create
+from .pydocc import Helper,resolve
+from .show_mainwin import show_mainwin
 
 class kdPythonAPIViewer(QWidget):
     def __init__(self):
-        super(kdPythonAPIViewer, self).__init__()
-        loadUi(sys.path[0] + "/kdPythonAPIViewer.ui", self)
+        super().__init__()
+        loadUi(get_file_realpath("kdPythonAPIViewer.ui"), self)
 
         self.helper = Helper()
-
-        # ~ self.navigate = navigate()
-        # ~ 在API文档中查找对应的关键字
-        # ~ self.navigate.find_word_signal.connect(self.find)
-        # ~ self.navigate.show_key_press_signal.connect(self.switch_navigate_window_state)
         self.load_dict()
-
+        self.show_mainwin = show_mainwin()
+        self.show_mainwin.show_mainwin_signal.connect(self.show_window)
+        self.show_mainwin.show()
         self.le_text.returnPressed.connect(self.on_pb_query_clicked)
         self.le_search.returnPressed.connect(self.on_le_search_returnPressed)
-        # ~ self.main_win.centralWidget()
-        # ~ screen = QtGui.QDesktopWidget().screenGeometry()
-        # ~ self.setGeometry(0, 0, screen.width(), screen.height())
-
-
-    def load(self, url):
-        self.webview.load(QUrl(url))
-        self.webview.show()
-
+        self.show_status = True
+        
+        
+#     加载系统的已安装的python模块
     def load_dict(self):
-        if os.path.exists(sys.path[0] +  "/dict.dat") :
-            with open(sys.path[0] + "/dict.dat", "r") as f:
+        if path.exists(config_file) :
+            with open(config_file, "r") as f:
                 content = f.read().strip()
                 if content != "" :
                     jcontent = json.loads(content)
+#                   加载模块时不触发cb_module的currentIndexChanged事件
                     self.adding_module_flag = True
+#                     默认不选中任何包
                     self.cb_module.addItem("")
                     for j in jcontent:
                         self.cb_module.addItem(j)
                     self.adding_module_flag = False
+                    return
+        self.on_pb_refresh_module_clicked()
 
-                    # ~ self.render_dict_tree(content)
+#   选中某一个包时,加载包下的所有模块
     # ~ @pyqtSlot()
     def on_cb_module_currentIndexChanged(self):
-        if self.adding_module_flag is False:
+        if not self.adding_module_flag :
             cur_module = self.cb_module.currentText()
-            print(cur_module)
             children =self.get_children(cur_module)
             self.fillWidget(children)
 
-   # Fills single cell in table
+#   渲染左侧模块树
     def fillItem(self, item, value):
         if type(value) is dict:
             for key, val in sorted(value.items()):
-                child = QtWidgets.QTreeWidgetItem()
-                print("key:",key)
+                child = QTreeWidgetItem()
                 child.setText(0, key)
                 item.addChild(child)
                 item.setExpanded(True)
-                child.setFlags(child.flags() | QtCore.Qt.ItemIsEditable)
+                child.setFlags(child.flags())
                 self.fillItem(child, val)
         elif type(value) is list:
-            print("list:",value)
             for single_value in value:
-                # ~ child = QtWidgets.QTreeWidgetItem()
-                # ~ print("single_value",single_value)
                 self.fillItem(item, single_value)
         else:
-            child = QtWidgets.QTreeWidgetItem()
+            child = QTreeWidgetItem()
             child.setText(0, str(value))
             item.addChild(child)
             item.setExpanded(True)
 
-    # Fills entire table widget
+#     初始化左侧模块树
     def fillWidget(self, value):
         self.tw_catelog.clear()
         self.fillItem(self.tw_catelog.invisibleRootItem(), value)
@@ -92,6 +83,7 @@ class kdPythonAPIViewer(QWidget):
     def on_le_text_focusOutEvent(self):
         self.on_pb_query_clicked()
 
+#     点击查询按钮，根据输入框的内容动态解析并查询模块的文档
     @pyqtSlot()
     def on_pb_query_clicked(self):
         query_text = self.le_text.text().strip()
@@ -125,14 +117,12 @@ class kdPythonAPIViewer(QWidget):
             module_ = query_text.split("import")
             self.main_module = module_[0].replace("from", "").strip()
             sub_module = str(module_[1]).split(",")
-            # ~ print(",".join(sub_module))
             self.cb_sub_text.clear()
             self.adding_item_flag = True
             for m in sub_module:
                 self.cb_sub_text.addItem(str(m).strip())
             self.cb_sub_text.showPopup()
             self.adding_item_flag = False
-            # ~ self.on_cb_sub_text_currentIndexChanged()
 
         if show_api_info:
             self.get_api_doc(module_)
@@ -143,64 +133,46 @@ class kdPythonAPIViewer(QWidget):
             module_ = self.main_module + "." + cur_item
             self.get_api_doc(str(module_))
 
+#     查询指定模块或包的API文档
     def get_api_doc(self, module_):
         doc = self.helper.help(str(module_))
         self.tb_result.setHtml(doc)
-        # ~ self.tb_result.setText(doc)
-        # ~ self.navigate.init_catelog(doc)
-        # ~ self.tb_result.find("Methods inherited from")
-        # ~ 定为到指定行
-        # ~ self.tb_result.find("Methods inherited from")
-        # ~ QTextBrowser
-        # ~ self.webview.setHtml("<html>a</html>")
-
+    
+#     拦截快捷键
     def keyPressEvent(self, event):
         curKey = event.key()
         # ~ print("按下：" + str(event.key()))
         if curKey == Qt.Key_F2:
             self.cb_module.setFocus()
-            self.switch_navigate_window_state(True)
+            self.cb_module.showPopup()
         elif curKey == Qt.Key_F3:
             self.le_text.setFocus()
         elif curKey == Qt.Key_F4:
+            self.cb_sub_text.setFocus()
             self.cb_sub_text.showPopup()
         elif curKey == Qt.Key_F5:
             self.le_search.setFocus()
+            self.le_search.selectAll()
         elif curKey == Qt.Key_F6:
             self.showMinimized()
-
-    def switch_navigate_window_state(self, show_flag):
-        if show_flag:
-            self.navigate.show()
-            self.navigate.activateWindow()
-        else:
-            self.navigate.hide()
+    
 
     def find(self, keyword):
-        # ~ 先向下查找,没有结果则向上查找
-        if self.tb_result.find(keyword) is not True:
+        # ~ 先向下查找,没有结果则向上查找，貌=貌似不会往回查询
+        if not self.tb_result.find(keyword):
             self.tb_result.find(keyword, QTextDocument.FindBackward)
 
-    def close(self):
-        self.navigate.close()
-
+#     单击指定的包
     def on_tw_catelog_itemClicked(self):
-        # ~ print(self.tw_catelog.currentItem().text(0))
         cur_item = self.tw_catelog.currentItem()
-        # ~ print(cur_item.parent().text(0))
-
         fullpath = self.get_fullpath_of_treeitem(cur_item,cur_item.text(0))
-        print(fullpath)
         children = self.get_children(fullpath)
         if cur_item.childCount() == 0 :
             self.fillItem(cur_item,children)
-            print("data",cur_item.childCount())
         else :
-            print(cur_item.isExpanded())
             cur_item.setExpanded(not cur_item.isExpanded())
 
-
-
+#     获取模块完整的包路径
     def get_fullpath_of_treeitem(self,item,path):
         parent = item.parent()
         if parent is None:
@@ -209,16 +181,17 @@ class kdPythonAPIViewer(QWidget):
         else:
             return self.get_fullpath_of_treeitem(parent,parent.text(0) + "." + path)
 
+#     获取指定包下的子包或模块
     def get_children(self, path):
         children = []
         object, name = resolve(path, 0)
         if inspect.ismodule(object):
-            print("is module")
+#             print("is module")
             if self.rb_all.isChecked():
                 self.get_api_doc(path)
             if hasattr(object, '__path__'):
                 names = [name  for filefiner, name, ispkg in pkgutil.iter_modules(object.__path__)]
-                print("names:",names)
+#                 print("names:",names)
                 children +=names
             else:
                 # ~ modules = inspect.getmembers(object, inspect.ismodule)
@@ -226,7 +199,7 @@ class kdPythonAPIViewer(QWidget):
                 # ~ print("modules",modules)
                 children +=[m[0] for m in modules]
         if inspect.isclass(object):
-            print("is class")
+#             print("is class")
             self.get_api_doc(path)
             # ~ children.append(inspect.getmembers(PyQt5, inspect.ismodule))
         if inspect.isroutine(object):
@@ -240,23 +213,32 @@ class kdPythonAPIViewer(QWidget):
         keyword = self.le_search.text()
         if self.tb_result.find(keyword) is not True:
             self.tb_result.find(keyword, QTextDocument.FindBackward)
+    
+#     刷新系统的模块列表，并存入到dict.dat文件，加入程序的启动速度
     @pyqtSlot()
     def on_pb_refresh_module_clicked(self):
         modules  =self.helper.listmodules()
-        print(modules)
+#         print(modules)
         self.cb_module.clear()
         self.adding_module_flag = True
         self.cb_module.addItems(modules)
         self.adding_module_flag = False
-        with open(sys.path[0] + "/dict.dat","w+") as f:
+        
+        check_and_create(config_file)
+        with open(config_file,"w+") as f:
             f.write(json.dumps(modules))
-
-
-if __name__ == "__main__":
+    
+    def show_window(self):
+        self.show_status = not self.show_status
+        self.setVisible(self.show_status)
+def main():
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     win = kdPythonAPIViewer()
     win.showMaximized()
-    print(dir(win))
+#     win.show()
     win.cb_module.showPopup()
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    main()

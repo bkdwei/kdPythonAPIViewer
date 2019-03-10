@@ -1,7 +1,10 @@
 # coding: utf-8
 import os
 
-
+config_file = os.path.join(os.path.expanduser('~') , ".config/kdPythonAPIViewer/dict.txt")
+cur_dir = os.path.dirname(os.path.realpath(__file__))
+def get_file_realpath(file):
+    return os.path.join(cur_dir,file)
 def check_and_create(absolute_file_path):
     slash_last_index = absolute_file_path.rindex("/")
     path = absolute_file_path[:slash_last_index]
