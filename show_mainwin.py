@@ -18,5 +18,5 @@ class show_mainwin(QWidget):
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
 
     pyqtSlot()
-    def on_pb_show_mainwin_pressed(self):
+    def on_pb_show_mainwin_released(self):
         self.show_mainwin_signal.emit()
