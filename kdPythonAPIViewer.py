@@ -30,6 +30,7 @@ class kdPythonAPIViewer(QWidget):
         self.float_btn = QPushButton("kdPythonAPIViewer")
         self.float_btn.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.float_btn.clicked.connect(self.show_window)
+        self.float_btn.show()
         
 #     加载系统的已安装的python模块
     def load_dict(self):
