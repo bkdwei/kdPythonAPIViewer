@@ -7,13 +7,12 @@ import json
 import inspect
 import pkgutil
 from PyQt5.QtCore import pyqtSlot, Qt, QFile
-from PyQt5.Qt import QCursor
+from PyQt5.Qt import QCursor, QPushButton
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget,QTreeWidgetItem,QApplication
 from PyQt5.QtGui import QTextDocument
 from PyQt5.uic import loadUi
 from .fileutil import get_file_realpath,config_file,check_and_create
 from .pydocc import Helper,resolve
-from .show_mainwin import show_mainwin
 
 class kdPythonAPIViewer(QWidget):
     def __init__(self):
@@ -22,13 +21,15 @@ class kdPythonAPIViewer(QWidget):
 
         self.helper = Helper()
         self.load_dict()
-        self.show_mainwin = show_mainwin()
-        self.show_mainwin.show_mainwin_signal.connect(self.show_window)
-        self.show_mainwin.show()
+
         self.le_text.returnPressed.connect(self.on_pb_query_clicked)
         self.le_search.returnPressed.connect(self.on_le_search_returnPressed)
         self.show_status = True
         
+#         悬浮置顶按钮
+        self.float_btn = QPushButton("kdPythonAPIViewer")
+        self.float_btn.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.float_btn.clicked.connect(self.show_window)
         
 #     加载系统的已安装的python模块
     def load_dict(self):

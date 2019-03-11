@@ -10,7 +10,7 @@ with open("kdPythonAPIViewer/README.md", "r",encoding="utf-8") as fh:
 setup(
 #     固定部分
     name="kdPythonAPIViewer",
-    version="1.0.5",
+    version="1.0.6",
     author="bkdwei",
     author_email="bkdwei@163.com",
     maintainer="韦坤东",
