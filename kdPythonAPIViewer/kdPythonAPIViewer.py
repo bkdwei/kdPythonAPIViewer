@@ -27,10 +27,10 @@ class kdPythonAPIViewer(QWidget):
         self.show_status = True
         
 #         悬浮置顶按钮
-        self.float_btn = QPushButton("kdPythonAPIViewer")
-        self.float_btn.setWindowFlags(Qt.WindowStaysOnTopHint)
-        self.float_btn.clicked.connect(self.show_window)
-        self.float_btn.show()
+#         self.float_btn = QPushButton("kdPythonAPIViewer")
+#         self.float_btn.setWindowFlags(Qt.WindowStaysOnTopHint)
+#         self.float_btn.clicked.connect(self.show_window)
+#         self.float_btn.show()
         
 #     加载系统的已安装的python模块
     def load_dict(self):
@@ -230,9 +230,9 @@ class kdPythonAPIViewer(QWidget):
         with open(config_file,"w+") as f:
             f.write(json.dumps(modules))
     
-    def show_window(self):
-        self.show_status = not self.show_status
-        self.setVisible(self.show_status)
+#     def show_window(self):
+#         self.show_status = not self.show_status
+#         self.setVisible(self.show_status)
 def main():
     import sys
     app = QApplication(sys.argv)
