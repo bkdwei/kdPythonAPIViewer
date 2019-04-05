@@ -10,7 +10,7 @@ class install_cmd(install):
             if sys.platform =="win32" :
                     script_file =  os.path.join(self._get_desktop_folder(),project_name + '.bat')
                     with open(script_file, "w") as f:
-                        f.write("@echo off\r\nstart " + project_name)
+                        f.write("@echo off\r\nstart " + project_name + ".exe")
             elif sys.platform == "linux":
                     import stat
                     script_file =  os.path.join(self._get_desktop_folder(),project_name + '.sh')
