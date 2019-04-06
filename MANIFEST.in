@@ -1,4 +1,3 @@
 include README.md
 include LICENSE
 include install_script.py
-include kdPythonAPIViewer/*.ui

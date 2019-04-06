@@ -5,8 +5,11 @@
 Created on 2019年3月3日
 @author: bkd
 '''
-
-from kdPythonAPIViewer.kdPythonAPIViewer import main
+from tkinter import messagebox
 
 if __name__ == '__main__':
-    main()
+    from kdPythonAPIViewer.kdPythonAPIViewer import main
+    try:
+        main()
+    except Exception as e:
+        messagebox.showerror("系统异常", str(e))

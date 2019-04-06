@@ -9,22 +9,26 @@ import pkgutil
 from PyQt5.QtCore import pyqtSlot, Qt, QFile
 from PyQt5.Qt import QCursor, QPushButton
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QWidget,QTreeWidgetItem,QApplication
-from PyQt5.QtGui import QTextDocument
+from PyQt5.QtGui import QTextDocument, QTextCursor
 from PyQt5.uic import loadUi
 from .fileutil import get_file_realpath,config_file,check_and_create
 from .pydocc import Helper,resolve
+from .kdPythonAPIViewer_ui import Ui_main_win
 
-class kdPythonAPIViewer(QWidget):
+class kdPythonAPIViewer(QWidget,Ui_main_win):
     def __init__(self):
         super().__init__()
-        loadUi(get_file_realpath("kdPythonAPIViewer.ui"), self)
+        self.setupUi(self)
+#         loadUi(get_file_realpath("kdPythonAPIViewer.ui"), self)
 
         self.helper = Helper()
         self.load_dict()
 
         self.le_text.returnPressed.connect(self.on_pb_query_clicked)
         self.le_search.returnPressed.connect(self.on_le_search_returnPressed)
+        self.cb_sub_text.currentTextChanged.connect(self.on_cb_sub_text_currentIndexChanged1)
         self.show_status = True
+        self.main_module = None
         
 #         悬浮置顶按钮
 #         self.float_btn = QPushButton("kdPythonAPIViewer")
@@ -128,12 +132,28 @@ class kdPythonAPIViewer(QWidget):
 
         if show_api_info:
             self.get_api_doc(module_)
-    # ~ @pyqtSlot()
-    def on_cb_sub_text_currentIndexChanged(self):
+#     @pyqtSlot()
+    def on_cb_sub_text_currentIndexChanged1(self):
         if self.adding_item_flag is not True:
             cur_item = self.cb_sub_text.currentText()
-            module_ = self.main_module + "." + cur_item
-            self.get_api_doc(str(module_))
+            if self.main_module:
+                try:
+                    module_ = self.main_module + "." + cur_item
+                    self.get_api_doc(str(module_))
+                except Exception as e:
+                    if not 'A' <= cur_item[0] <= 'Z':
+                        cur_item = cur_item +"(...)" 
+                    if not self.tb_result.find(cur_item):
+                        self.tb_result.moveCursor(QTextCursor.Start)
+                        find_result = self.tb_result.find(cur_item)
+                        print(find_result)
+            else:
+                if not 'A' <= cur_item[0] <= 'Z':
+                    cur_item = cur_item +"(...)" 
+                if not self.tb_result.find(cur_item):
+                    self.tb_result.moveCursor(QTextCursor.Start)
+                    find_result = self.tb_result.find(cur_item)
+                    print(find_result)
 
 #     查询指定模块或包的API文档
     def get_api_doc(self, module_):
@@ -160,7 +180,7 @@ class kdPythonAPIViewer(QWidget):
     
 
     def find(self, keyword):
-        # ~ 先向下查找,没有结果则向上查找，貌=貌似不会往回查询
+        # ~ 先向下查找,没有结果则向上查找，貌似不会往回查询
         if not self.tb_result.find(keyword):
             self.tb_result.find(keyword, QTextDocument.FindBackward)
 
@@ -202,6 +222,17 @@ class kdPythonAPIViewer(QWidget):
                 children +=[m[0] for m in modules]
         if inspect.isclass(object):
 #             print("is class")
+            final_items = []
+            methods  = dir(object)
+            for b in methods :
+                if not b.startswith("__"):
+                    final_items.append(b)
+            sorted(final_items)        
+            self.adding_item_flag = True
+            self.cb_sub_text.addItems(final_items)
+#             self.cb_sub_text.showPopup()
+            self.adding_item_flag = False
+            
             self.get_api_doc(path)
             # ~ children.append(inspect.getmembers(PyQt5, inspect.ismodule))
         if inspect.isroutine(object):
@@ -213,7 +244,7 @@ class kdPythonAPIViewer(QWidget):
     def on_le_search_returnPressed(self):
         # ~ 先向下查找,没有结果则向上查找
         keyword = self.le_search.text()
-        if self.tb_result.find(keyword) is not True:
+        if not self.tb_result.find(keyword) :
             self.tb_result.find(keyword, QTextDocument.FindBackward)
     
 #     刷新系统的模块列表，并存入到dict.dat文件，加入程序的启动速度
