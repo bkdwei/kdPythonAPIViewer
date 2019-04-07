@@ -19,7 +19,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
         super().__init__()
         self.setupUi(self)
 #          self.setWindowIcon(QIcon("logo.jpg"))
-        self.setWindowIcon(QIcon(get_file_realpath("logo.png")))
+#         self.setWindowIcon(QIcon(get_file_realpath("logo.png")))
 #         获取API文档的类
         self.helper = Helper()
 

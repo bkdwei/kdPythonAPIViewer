@@ -1,4 +1,4 @@
 include README.md
 include LICENSE
 include install_script.py
-include logo.png
+include kdPythonAPIViewer/logo.png
