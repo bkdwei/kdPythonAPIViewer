@@ -2,6 +2,7 @@
 import os
 
 config_file = os.path.join(os.path.expanduser('~') , ".config/kdPythonAPIViewer/dict.txt")
+class_file = os.path.join(os.path.expanduser('~') , ".config/kdPythonAPIViewer/class_cache.txt")
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 def get_file_realpath(file):
     return os.path.join(cur_dir,file)

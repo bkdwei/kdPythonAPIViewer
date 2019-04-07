@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>pythonAPI查看器</string>
+   <string>kdPythonAPI查看器</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" rowspan="4">
+   <item row="2" column="0" rowspan="4">
     <widget class="QTreeWidget" name="tw_catelog">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
@@ -59,8 +59,8 @@
      </column>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QComboBox" name="cb_module">
+   <item row="1" column="0">
+    <widget class="QComboBox" name="cb_library">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -78,6 +78,29 @@
      </property>
     </widget>
    </item>
+   <item row="3" column="1">
+    <widget class="QTextBrowser" name="tb_result">
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;快捷键&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F2:选择库&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F3:搜索类&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F4:选择方法与属性&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F5:搜索API正文&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F6:最小化窗口&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="pb_refresh_module">
+     <property name="text">
+      <string>缓存Python库</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -89,16 +112,12 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>模块</string>
+        <string>类     </string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="le_text">
-       <property name="text">
-        <string>from PyQt5.QtWidgets import QWidget</string>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="le_class"/>
      </item>
      <item>
       <widget class="QLabel" name="lb_sub_text">
@@ -138,34 +157,14 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="pb_query">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>查询</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="pb_refresh_module">
-       <property name="text">
-        <string>刷新模块列表</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLabel" name="lb_search">
        <property name="text">
-        <string>搜索</string>
+        <string>正文</string>
        </property>
       </widget>
      </item>
@@ -183,9 +182,29 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pb_query">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>查询</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="lb_display">
        <property name="text">
-        <string>显示</string>
+        <string>显示对象</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="rb_all">
+       <property name="text">
+        <string>模块与类</string>
        </property>
       </widget>
      </item>
@@ -199,30 +218,7 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QRadioButton" name="rb_all">
-       <property name="text">
-        <string>所有</string>
-       </property>
-      </widget>
-     </item>
     </layout>
-   </item>
-   <item row="2" column="1">
-    <widget class="QTextBrowser" name="tb_result">
-     <property name="html">
-      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;快捷键&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F2:选择包&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F3:输入import、from等语句&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F4:选择方法与属性&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F5:搜索API正文&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;F6:最小化窗口&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
