@@ -12,8 +12,7 @@ from PyQt5.QtGui import QTextDocument, QTextCursor,QIcon
 from .fileutil import config_file,check_and_create,class_file
 from .pydocc import Helper,resolve
 from .kdPythonAPIViewer_ui import Ui_main_win
-from kdDesktopAssistant.fileutil import get_file_realpath
-from numpy.core.setup_common import get_api_versions
+from .fileutil import get_file_realpath
 
 class kdPythonAPIViewer(QWidget,Ui_main_win):
     def __init__(self):
