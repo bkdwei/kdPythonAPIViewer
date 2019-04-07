@@ -30,7 +30,7 @@ query Python API and third party library API via GUI interface.
 
 # 使用说明
 - 首次使用或安装了新的Python库时，需要先点击“缓存Python库”
-- 选择左侧下拉框中的库，然后在类的输入框任意输入一个类的名称即可加载该类的API。比如下拉框选择PyQt5，在类的输入框键入qli即可显示PyQt5.Qt.QLineEdit组件，回车即可显示API文档。![kdPythonAPIViewer_screenshot](/screenshot/使用说明.jpg)
+- 选择左侧下拉框中的库，然后在类的输入框任意输入一个类的名称即可加载该类的API。比如下拉框选择PyQt5，在类的输入框键入qli即可显示PyQt5.Qt.QLineEdit组件，回车即可显示API文档。 ![kdPythonAPIViewer_screenshot](/screenshot/使用说明.jpg)
 - 加载完类的文档后，可以点击方法与属性下拉框，查看该类对应的方法和属性
 - 当库的描述文档太大时（比如PyQt5.QtWidgets的文档就特别大），可以设置仅显示类的文档
 
