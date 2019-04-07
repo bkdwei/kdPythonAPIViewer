@@ -61,8 +61,8 @@ class class_search(QLineEdit):
             if not self.adding_lv_class_flag :
                 cur_item= self.lv_class.currentItem()
 #                 print("previous",previous.text())
-                if not cur_item :
-                    print("currentText",self.lv_class.currentText())
+#                 if not cur_item :
+#                     print("currentText",self.lv_class.currentText())
                 if cur_item and cur_item.text() != "" :
                     print("cur_item.text():" + cur_item.text())
                     self.get_api_doc_signal.emit(cur_item.text())

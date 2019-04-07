@@ -87,10 +87,9 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 #             放到内存
             for c in children :
                 self.get_class_recursive(cur_module + "." + c)
-            print("self.le_class.class_list:",self.le_class.class_list)
             
-            self.tb_result.append("即使加载库异常，也不影响正常使用")
-            self.tb_result.moveCursor(QTextCursor.End)
+#             self.tb_result.append("即使加载库异常，也不影响正常使用")
+#             self.tb_result.moveCursor(QTextCursor.End)
             
 #             更新当前包的遍历结果到文件
             package_item ={cur_module:self.le_class.class_list}
@@ -102,6 +101,8 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
                 self.le_class.class_list = self.package_map[cur_module]
                 children =self.get_children(cur_module)
                 self.fillWidget(children)
+        print("self.le_class.class_list:", self.le_class.class_list)
+        
 #     初始化左侧树状库的根部
     def fillWidget(self, value):
         self.tw_catelog.clear()
@@ -169,7 +170,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 
 #     @pyqtSlot()
     def on_cb_sub_text_currentIndexChanged(self):
-        if self.adding_item_flag is not True:
+        if not self.adding_item_flag :
             cur_item = self.cb_sub_text.currentText()
             if self.main_module:
                 try:
@@ -282,7 +283,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 #     获取指定包下的所有类
     def get_class_recursive(self, path):
         try :
-            resolved_object, _ = resolve(path, 0)
+            resolved_object, resolve_name = resolve(path, 0)
         except Exception as e:
             print("忽略加载异常，库：{}，异常详情：{}".format(path,str(e)))
 #             self.tb_result.append("忽略加载异常，库：{}，异常详情：{}".format(path,str(e)))
@@ -305,7 +306,8 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
                 print("children has not path:" , path)
                 self.le_class.class_list += children
         if inspect.isclass(resolved_object):
-            self.le_class.class_list.append(path)
+            print("add single class",{"name":resolve_name,"path":path})
+            self.le_class.class_list.append({"name":resolve_name,"path":path})
 
 
     @pyqtSlot()
