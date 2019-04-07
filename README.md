@@ -24,7 +24,7 @@ query Python API and third party library API via GUI interface.
 
 ![kdPythonAPIViewer_screenshot](/screenshot/QLineEdit.setText.jpg)
 
-![kdPythonAPIViewer_screenshot](/screenshot/QLine)
+![kdPythonAPIViewer_screenshot](/screenshot/qline.jpg)
 
 ![kdPythonAPIViewer_screenshot](/screenshot/QLineEdit.show.jpg)
 
