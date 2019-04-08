@@ -89,3 +89,5 @@ class class_search(QLineEdit):
                     self.lv_class.setCurrentRow(row)
             elif key  == Qt.Key_Right or key == Qt.Key_Return :
                 self.get_doc()
+            elif key == Qt.Key_Escape :
+                self.lv_class.setVisible(False)
