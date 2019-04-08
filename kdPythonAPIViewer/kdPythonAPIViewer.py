@@ -9,11 +9,10 @@ import pkgutil
 from traceback import format_exception
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import  QWidget,QTreeWidgetItem,QApplication, QMessageBox
-from PyQt5.QtGui import QTextDocument, QTextCursor,QIcon
+from PyQt5.QtGui import QTextDocument, QTextCursor
 from .fileutil import config_file,check_and_create,class_file
 from .pydocc import Helper,resolve
 from .kdPythonAPIViewer_ui import Ui_main_win
-from .fileutil import get_file_realpath
 
 class kdPythonAPIViewer(QWidget,Ui_main_win):
     def __init__(self):
@@ -80,6 +79,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 #     @pyqtSlot()
     def on_cb_library_currentIndexChanged(self):
         cur_module = self.cb_library.currentText()
+        print("cur_module:"+cur_module)
         if not self.adding_library_flag and not  cur_module in self.package_map.keys():
             print("首次加载库")
             self.le_class.class_list.clear()
@@ -94,13 +94,13 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 #             self.tb_result.moveCursor(QTextCursor.End)
             
 #             更新当前包的遍历结果到文件
-            package_item ={cur_module:self.le_class.class_list}
-            self.package_map.update(package_item)
+            self.package_map[cur_module] =self.le_class.class_list.copy()
             check_and_create(config_file)
+            print("cur_module:"+ cur_module,",self.package_map",self.package_map)
             with open(class_file,"w") as f:
                 f.write(json.dumps(self.package_map))
 #         elif all([hasattr(self,"package_map"), hasattr(self.le_class,"class_list"), cur_module != ""]):
-        elif all([hasattr(self,"package_map"), hasattr(self.le_class,"class_list"), cur_module != "",hasattr(self.package_map, cur_module)]):
+        elif all([hasattr(self,"package_map"), hasattr(self.le_class,"class_list"), cur_module != "",cur_module in self.package_map]):
                 self.le_class.class_list = self.package_map[cur_module]
                 children =self.get_children(cur_module)
                 self.fillWidget(children)
