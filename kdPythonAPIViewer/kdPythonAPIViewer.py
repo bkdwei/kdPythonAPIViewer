@@ -6,8 +6,9 @@ import sys
 import json
 import inspect
 import pkgutil
+from traceback import format_exception
 from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtWidgets import  QWidget,QTreeWidgetItem,QApplication
+from PyQt5.QtWidgets import  QWidget,QTreeWidgetItem,QApplication, QMessageBox
 from PyQt5.QtGui import QTextDocument, QTextCursor,QIcon
 from .fileutil import config_file,check_and_create,class_file
 from .pydocc import Helper,resolve
@@ -18,6 +19,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.patch_excepthook()
 #          self.setWindowIcon(QIcon("logo.jpg"))
 #         self.setWindowIcon(QIcon(get_file_realpath("logo.png")))
 #         获取API文档的类
@@ -41,6 +43,7 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
         self.cb_sub_text.currentTextChanged.connect(self.on_cb_sub_text_currentIndexChanged)
         
         self.le_class.get_api_doc_signal.connect(self.on_lv_class_seleted)
+        
 
 #         悬浮置顶按钮
 #         self.show_status = True
@@ -96,7 +99,8 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
             check_and_create(config_file)
             with open(class_file,"w") as f:
                 f.write(json.dumps(self.package_map))
-        elif hasattr(self,"package_map") and hasattr(self.le_class,"class_list") and cur_module != "":
+#         elif all([hasattr(self,"package_map"), hasattr(self.le_class,"class_list"), cur_module != ""]):
+        elif all([hasattr(self,"package_map"), hasattr(self.le_class,"class_list"), cur_module != "",hasattr(self.package_map, cur_module)]):
                 self.le_class.class_list = self.package_map[cur_module]
                 children =self.get_children(cur_module)
                 self.fillWidget(children)
@@ -327,13 +331,23 @@ class kdPythonAPIViewer(QWidget,Ui_main_win):
 #         self.show_status = not self.show_status
 #         self.setVisible(self.show_status)
     
+    def new_except_hook(self,etype, evalue, tb):
+        QMessageBox.information(None, 
+                                      str('error'),
+                                      ''.join(format_exception(etype, evalue, tb)))
+        sys.exit()
+    
+#     注册全局异常处理类
+    def patch_excepthook(self):
+        sys.excepthook = self.new_except_hook
 def main():
-    app = QApplication(sys.argv)
-    win = kdPythonAPIViewer()
-    win.showMaximized()
-#     win.show()
-#     win.cb_library.showPopup()
-    sys.exit(app.exec_())
+        
+        app = QApplication(sys.argv)
+    #     win.show()
+    #     win.cb_library.showPopup()
+        win = kdPythonAPIViewer()
+        win.showMaximized()
+        sys.exit( app.exec_())
 
 if __name__ == "__main__":
     main()

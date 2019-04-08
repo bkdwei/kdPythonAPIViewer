@@ -8,8 +8,10 @@ Created on 2019年3月3日
 from tkinter import messagebox
 
 if __name__ == '__main__':
-    from kdPythonAPIViewer.kdPythonAPIViewer import main
     try:
+#         防止初始化异常
+        from kdPythonAPIViewer.kdPythonAPIViewer import main
         main()
     except Exception as e:
+        print("系统异常", str(e))
         messagebox.showerror("系统异常", str(e))
